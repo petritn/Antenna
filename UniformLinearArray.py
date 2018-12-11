@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from math import pi
+
+# Define Visibility Region
+DIM = 181
 
 # Number of Array Antenna Elements
 N = 8
@@ -18,25 +22,27 @@ k = 2*pi
 ElementSpacing = 1/2
 
 # Array Factor initiated variable
-AF = np.zeros(180)
+AF = np.zeros(DIM)
 
-Angle = range(180)
-AngleRadians = np.zeros(180)
-VisibleRegion = np.zeros(180) # Visible region defined as cos(theta)
+Angle = np.arange(0, DIM, 1)
+AngleRadians = np.zeros(DIM)
 
-# Calculate Array Factor
+# Visible region defined as cos(theta)
+VisibleRegion = np.zeros(DIM)
+
+# Calculate Array Factor of Linear Array
 for n in range(N):
-    for theta in range(180):
+    for theta in range(DIM):
         Gamma = k*ElementSpacing*np.cos(theta*pi/180)
         AF[theta] += np.real(np.exp(1j*n*Gamma))
         AngleRadians[theta] = theta*pi/180
         VisibleRegion[theta] = np.cos(theta*pi/180)
 
 # Normalize the Array Factor
-NormalizedAF = np.zeros(180)
-NormalizedPowerPattern = np.zeros(180)
+NormalizedAF = np.zeros(DIM)
+NormalizedPowerPattern = np.zeros(DIM)
 maxAF = np.max(AF)
-for theta in range(180):
+for theta in range(DIM):
     NormalizedAF[theta] = np.abs(AF[theta])/maxAF
     NormalizedPowerPattern[theta] = 20*np.log10(NormalizedAF[theta])
 
@@ -44,6 +50,7 @@ for theta in range(180):
 AveragePower =(np.average(AF))**2
 MaximumPower = maxAF**2
 GainDB = 10*np.log10(MaximumPower/AveragePower)
+print(GainDB)
 
 
 # Plotting the calculated array pattern (factor)
@@ -60,3 +67,19 @@ plt.polar(AngleRadians, NormalizedAF)
 plt.title("Normalized Array Factor")
 plt.xlabel("$\Theta$, degrees")
 plt.show()
+
+fig = plt.figure()
+ax = Axes3D(fig)
+
+theta = np.arange(0, DIM, 1)
+phi = np.arange(0, DIM, 1)
+
+x = np.outer(np.cos(phi), np.sin(theta))
+y = np.outer(np.sin(phi), np.sin(theta))
+
+ax.plot_wireframe(x, y, NormalizedAF)
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+plt.show()
+
