@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from math import pi
 
 # Define Visibility Region
@@ -50,7 +49,6 @@ for theta in range(DIM):
 AveragePower =(np.average(AF))**2
 MaximumPower = maxAF**2
 GainDB = 10*np.log10(MaximumPower/AveragePower)
-print(GainDB)
 
 
 # Plotting the calculated array pattern (factor)
@@ -62,24 +60,9 @@ plt.ylabel("Normalized Power Pattern (dB)")
 plt.ylim(-40, 0.0)
 plt.show()
 
-plt.figure(2)
+plt.figure(1)
 plt.polar(AngleRadians, NormalizedAF)
 plt.title("Normalized Array Factor")
 plt.xlabel("$\Theta$, degrees")
-plt.show()
-
-fig = plt.figure()
-ax = Axes3D(fig)
-
-theta = np.arange(0, DIM, 1)
-phi = np.arange(0, DIM, 1)
-
-x = np.outer(np.cos(phi), np.sin(theta))
-y = np.outer(np.sin(phi), np.sin(theta))
-
-ax.plot_wireframe(x, y, NormalizedAF)
-ax.set_xlabel("X")
-ax.set_ylabel("Y")
-ax.set_zlabel("Z")
 plt.show()
 
