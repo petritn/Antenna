@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from mpl_toolkits.mplot3d import Axes3D
-from General import sph2cart
+from General import sph2cart, planarAF, planarAF2
 from math import pi
 
 # Define visibility region
@@ -42,30 +42,7 @@ for i in range(DIM):
 
 
 # Calculate Array Factor for a two-dimensional array antenna
-for m in range(M):
-    for n in range(N):
-        for theta in range(DIM):
-            partTheta = k * np.sin((theta-90) * pi / 180)
-            for phi in range(DIM):
-                partPhi = m * dX * np.cos(phi * pi / 180) + n * dY * np.sin(phi * pi / 180)
-                AF[theta, phi] += np.real(np.exp(1j*partTheta*partPhi))
-
-'''
-# Calculating the Array Factor of a Planar Array as a product of two linear arrays
-for m in range(M):
-    for theta in range(DIM):
-        for phi in range(DIM):
-            Sxm[theta, phi] += np.real(np.exp(1j*m*k*dX*np.sin((theta-90)*pi/180)*np.cos(phi*pi/180)+pi/2))
-
-for n in range(N):
-    for theta in range(DIM):
-        for phi in range(DIM):
-            Sym[theta, phi] += np.real(np.exp(1j*n*k*dY*np.sin((theta-90)*pi/180)*np.sin(phi*pi/180)))
-
-for theta in range(DIM):
-    for phi in range(DIM):
-        AF[theta, phi] = Sxm[theta, phi] * Sym[theta, phi]
-'''
+AF = planarAF2(M, N, dX, dY)
 
 # Normalize the Array Factor and Calculate Power Pattern
 NormalizedAF = [[0 for x in range(DIM)] for y in range(DIM)]
@@ -92,7 +69,7 @@ Z = np.ones((DIM, DIM))
 
 for phi in range(DIM):
     for theta in range(DIM):
-        e = NormalizedAF[phi][theta]
+        e = AF[phi][theta]
 
         xe, ye, ze = sph2cart(math.radians(theta), math.radians(phi), e)
 
@@ -100,8 +77,8 @@ for phi in range(DIM):
         Y[phi, theta] = ye
         Z[phi, theta] = ze
 
-ax.plot_wireframe(X, Y, Z, rstride=2, cstride=2)
-ax.plot_surface(X, Y, Z, color='red')
+#ax.plot_wireframe(X, Y, Z, rstride=2, cstride=2)
+ax.plot_surface(X, Y, Z, cmap=plt.cm.YlGnBu_r)
 plt.xlabel("$\Theta$")
 plt.ylabel("$\Phi$")
 plt.grid()
