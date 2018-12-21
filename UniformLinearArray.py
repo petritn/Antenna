@@ -32,8 +32,8 @@ VisibleRegion = np.zeros(DIM)
 
 LA = LinearArray(8, 0.5)
 # Calculate Array Factor of Linear Array
-AF = LA.normalized_array_factor()
-NormalizedPowerPattern = LA.normalized_power_pattern()
+AF = LA.normalized_array_factor
+NormalizedPowerPattern = LA.normalized_power_pattern
 
 for theta in range(DIM):
     AngleRadians[theta] = theta*pi/180
@@ -41,7 +41,7 @@ for theta in range(DIM):
 
 
 # Calculating the gain of the antenna array (assuming isotropic elements)
-gain = LA.gain_db()
+gain = LA.gain_db
 print(gain)
 
 # Plotting the calculated array pattern (factor)

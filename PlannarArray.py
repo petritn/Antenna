@@ -2,21 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from mpl_toolkits.mplot3d import Axes3D
-from General import sph2cart, planarAF, planarAF2
+from General import sph2cart
 from math import pi
+from CArray import PlanarArray
 
 # Define visibility region
 DIM = 181
 
 # Specify Number of Array Antenna Elements
-N = 8
-M = 8
+N = 6
+M = 6
 
 # Complex Element Excitations
 Emn = np.ones((M, N), dtype=complex)
 
-Emn[0, 0] = 2*np.exp(1j*pi)
-print(Emn[0, 0])
+# Emn[0, 0] = 2*np.exp(1j*pi)
+# print(Emn[0, 0])
 
 # Normalized Wave Number
 k = 2*pi
@@ -42,22 +43,15 @@ for i in range(DIM):
 
 
 # Calculate Array Factor for a two-dimensional array antenna
-AF = planarAF2(M, N, dX, dY)
+pa = PlanarArray(M, N, dX, dY)
+
+AF = pa.array_factor2
 
 # Normalize the Array Factor and Calculate Power Pattern
-NormalizedAF = [[0 for x in range(DIM)] for y in range(DIM)]
-NormalizedPowerPattern = [[0 for x in range(DIM)] for y in range(DIM)]
-maxAF = np.max(AF)
+NormalizedAF = pa.normalized_array_factor2
+NormalizedPowerPattern = pa.normalized_power_pattern2
 
-for theta in range(DIM):
-    for phi in range(DIM):
-        NormalizedAF[theta][phi] = np.abs(AF[theta, phi])/maxAF
-        NormalizedPowerPattern[theta][phi] = 20*np.log10(NormalizedAF[theta][phi])
-
-# Calculating the gain of the antenna array (assuming isotropic elements)
-AveragePower = np.average(AF)**2
-MaximumPower = maxAF**2
-GainDB = 10*np.log10(MaximumPower/AveragePower)
+print(pa.gain_db)
 
 # Plotting the calculated array pattern (factor)
 fig = plt.figure()
@@ -69,7 +63,7 @@ Z = np.ones((DIM, DIM))
 
 for phi in range(DIM):
     for theta in range(DIM):
-        e = AF[phi][theta]
+        e = NormalizedAF[phi][theta]
 
         xe, ye, ze = sph2cart(math.radians(theta), math.radians(phi), e)
 
@@ -77,8 +71,8 @@ for phi in range(DIM):
         Y[phi, theta] = ye
         Z[phi, theta] = ze
 
-#ax.plot_wireframe(X, Y, Z, rstride=2, cstride=2)
-ax.plot_surface(X, Y, Z, cmap=plt.cm.YlGnBu_r)
+ax.plot_wireframe(X, Y, Z, rstride=2, cstride=2)
+#ax.plot_surface(X, Y, Z, color='red')
 plt.xlabel("$\Theta$")
 plt.ylabel("$\Phi$")
 plt.grid()
