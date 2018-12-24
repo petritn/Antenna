@@ -42,11 +42,20 @@ class LinearArray(object):
         The calculated array factor of the antenna array, for the linear antenna array object
 
         """
-        af = np.zeros(181)
-        for n in range(self.n):
-            for theta in range(181):
-                gamma = 2 * pi * self.dx * np.cos(theta * pi / 180)
-                af[theta] += np.real(np.exp(1j * n * gamma))
+        if hasattr(self, 'e'):
+            af = np.zeros(181)
+            for n in range(self.n):
+                for theta in range(181):
+                    gamma = 2 * pi * self.dx * np.cos(theta * pi / 180)
+                    af[theta] += np.real(self.e[n]*np.exp(1j * n * gamma))
+
+        else:
+            af = np.zeros(181)
+            for n in range(self.n):
+                for theta in range(181):
+                    gamma = 2 * pi * self.dx * np.cos(theta * pi / 180)
+                    af[theta] += np.real(np.exp(1j * n * gamma))
+
         return af
 
     @property
