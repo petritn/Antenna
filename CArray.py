@@ -1,6 +1,20 @@
 import numpy as np
 from numpy import pi
 
+"""
+Arrays can be created with or without specifying the element excitations.  If element excitations are not specified
+uniform amplitude and zero phase is assumed, resulting in a uniform linear array or uniform planar array.
+
+Planar array radiation pattern can be calculated in two ways, first with fully flexible element excitations or 
+by considering the planar array as a product of two linear arrays (a more practical implementation resulting in 
+simplified feeding structure).
+
+Currently in the CArray class definitions the element pattern is always assumed to be isotropic.  The class definition 
+can easily be expanded to account for non-isotropic element patterns.  To get the radiation pattern of the array antenna
+element pattern multiplies the array factor.
+
+"""
+
 ###############################
 # Linear Array Class Definition
 
